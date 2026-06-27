@@ -1,0 +1,44 @@
+{
+  "platforms": {
+    "instagram": {
+      "url": "https://www.instagram.com/{}/",
+      "check": "404 or user_not_found"
+    },
+    "twitter": {
+      "url": "https://twitter.com/{}/",
+      "check": "404 or user-not-found"
+    },
+    "github": {
+      "url": "https://github.com/{}",
+      "check": "404"
+    },
+    "tiktok": {
+      "url": "https://www.tiktok.com/@{}",
+      "check": "404 or Couldn’t find"
+    },
+    "snapchat": {
+      "url": "https://www.snapchat.com/add/{}",
+      "check": "404"
+    },
+    "reddit": {
+      "url": "https://www.reddit.com/user/{}/",
+      "check": "404"
+    },
+    "pinterest": {
+      "url": "https://www.pinterest.com/{}/",
+      "check": "404 or Sorry! We couldn"
+    },
+    "twitch": {
+      "url": "https://www.twitch.tv/{}",
+      "check": "404 or isNotFound"
+    },
+    "youtube": {
+      "url": "https://www.youtube.com/@{}",
+      "check": "404 or channelId not found"
+    },
+    "telegram": {
+      "url": "https://t.me/{}",
+      "check": "tgme_page_extra not found"
+    }
+  }
+}
