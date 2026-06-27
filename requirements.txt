@@ -1,4 +1,4 @@
 # WEBHOOK-HUNTER Requirements
 # ---------------------------
-# جميع المكتبات المستخدمة هي مكتبات Python القياسية
-# لا تحتاج إلى تثبيت أي شيء إضافي
+# All libraries used are Python standard libraries
+# No additional installation required
