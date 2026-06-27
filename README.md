@@ -1,6 +1,6 @@
 <div align="center">
   <h1>🥷 WEBHOOK-HUNTER</h1>
-  <p><strong>Shadow Username Hunter — إصطياد اليوزرات النادرة + إرسال إلى Webhook</strong></p>
+  <p><strong>صائد اليوزرات النادرة — إرسال النتائج إلى Webhook</strong></p>
   <p>
     <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python">
     <img src="https://img.shields.io/badge/Termux-Compatible-brightgreen?style=for-the-badge&logo=android">
@@ -50,4 +50,4 @@ cd WEBHOOK-HUNTER
 pip install -r requirements.txt
 
 # تشغيل الأداة
-python3 webhook_hunter.py 
+python3 webhook_hunter.py
