@@ -3,11 +3,11 @@
 """
 ╔═══════════════════════════════════════════════════════════════╗
 ║   🥷 WEBHOOK-HUNTER — Shadow Username Hunter               ║
-║   إصطياد اليوزرات النادرة + إرسالها إلى Webhook            ║
-║   Discord: in7j  |  Python 3 فقط                           ║
-║   ⚠️ للأغراض التعليمية فقط                                ║
+║   Hunt Rare Usernames + Send to Webhook                    ║
+║   Discord: in7j  |  Python 3 Only                          ║
+║   ⚠️ Educational Purpose Only                              ║
 ║   ═════════════════════════════════════════════════════════ ║
-║   © 2026 NINJA ™ — جميع الحقوق محفوظة                     ║
+║   © 2026 NINJA ™ — All Rights Reserved                    ║
 ╚═══════════════════════════════════════════════════════════════╝
 """
 
@@ -23,22 +23,22 @@ import urllib.error
 from datetime import datetime
 
 # ================================================================
-#  التحقق من إصدار Python
+#  Python Version Check
 # ================================================================
 if sys.version_info < (3, 6):
-    print("\033[91m[!] خطأ: مطلوب Python 3.6 أو أعلى\033[0m")
+    print("\033[91m[!] Error: Python 3.6 or higher required\033[0m")
     sys.exit(1)
 
 # ================================================================
-#  توقيع NINJA
+#  NINJA Signature
 # ================================================================
 VERSION = "WEBHOOK-HUNTER-v1.0"
 AUTHOR = "in7j"
 CONTACT = "DISCORD: in7j"
-COPYRIGHT = "© 2026 NINJA ™ — جميع الحقوق محفوظة"
+COPYRIGHT = "© 2026 NINJA ™ — All Rights Reserved"
 
 # ================================================================
-#  الألوان
+#  Colors
 # ================================================================
 class Colors:
     RED = '\033[91m'
@@ -59,7 +59,7 @@ def clear_screen():
     os.system('clear' if os.name == 'posix' else 'cls')
 
 # ================================================================
-#  البانر
+#  Banner
 # ================================================================
 def print_banner():
     clear_screen()
@@ -72,15 +72,15 @@ def print_banner():
 {Colors.RED}║{Colors.YELLOW}   ██║  ██║╚██████╔╝██║ ╚████║   ██║   ███████╗██║  ██║ {Colors.RED}║
 {Colors.RED}║{Colors.YELLOW}   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝ {Colors.RED}║
 {Colors.RED}║{Colors.CYAN}   🥷 WEBHOOK-HUNTER  v1.0                           {Colors.RED}║
-{Colors.RED}║{Colors.GREEN}   إصطياد اليوزرات + إرسال إلى Webhook              {Colors.RED}║
-{Colors.RED}║{Colors.RED}   ⚠️  للأغراض التعليمية فقط                           {Colors.RED}║
+{Colors.RED}║{Colors.GREEN}   Hunt Rare Usernames + Send to Webhook            {Colors.RED}║
+{Colors.RED}║{Colors.RED}   ⚠️  Educational Purpose Only                        {Colors.RED}║
 {Colors.RED}║{Colors.DIM}   {COPYRIGHT}                                          {Colors.RED}║
 {Colors.RED}╚═══════════════════════════════════════════════════════════════╝{Colors.RESET}
     """
     print(banner)
 
 # ================================================================
-#  المنصات المدعومة
+#  Supported Platforms
 # ================================================================
 PLATFORMS = {
     "instagram": {
@@ -126,7 +126,7 @@ PLATFORMS = {
 }
 
 # ================================================================
-#  مولد اليوزرات
+#  Username Generator
 # ================================================================
 def generate_username(length, pattern=None):
     chars = string.ascii_lowercase + string.digits
@@ -164,7 +164,7 @@ def generate_batch(length, count, pattern=None):
     return result
 
 # ================================================================
-#  فحص اليوزر
+#  Username Checker
 # ================================================================
 def check_username(username, platform):
     config = PLATFORMS.get(platform)
@@ -190,35 +190,34 @@ def check_username(username, platform):
         return None
 
 # ================================================================
-#  إرسال إلى Webhook
+#  Webhook Sender
 # ================================================================
 def send_to_webhook(webhook_url, username, platform):
-    """إرسال يوزر مكتشف إلى Webhook"""
+    """Send discovered username to Webhook"""
     try:
-        # تنسيق الرسالة
         embed = {
             "embeds": [{
-                "title": "🎯 تم العثور على يوزر نادر!",
+                "title": "🎯 Rare Username Found!",
                 "color": 0x00ff00,
                 "fields": [
                     {
-                        "name": "👤 اليوزرنيم",
+                        "name": "👤 Username",
                         "value": f"`@{username}`",
                         "inline": True
                     },
                     {
-                        "name": "🌐 المنصة",
+                        "name": "🌐 Platform",
                         "value": platform.capitalize(),
                         "inline": True
                     },
                     {
-                        "name": "📅 التاريخ",
+                        "name": "📅 Date",
                         "value": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                         "inline": False
                     },
                     {
-                        "name": "🔗 الرابط",
-                        "value": f"[اضغط هنا]({PLATFORMS[platform]['url'].format(username)})",
+                        "name": "🔗 Link",
+                        "value": f"[Click Here]({PLATFORMS[platform]['url'].format(username)})",
                         "inline": False
                     }
                 ],
@@ -243,13 +242,13 @@ def send_to_webhook(webhook_url, username, platform):
             return response.status == 204 or response.status == 200
             
     except Exception as e:
-        print(f"{col(Colors.RED, f'[!] فشل إرسال إلى Webhook: {e}')}")
+        print(f"{col(Colors.RED, f'[!] Failed to send to Webhook: {e}')}")
         return False
 
 # ================================================================
-#  أنيميشن التحميل
+#  Loading Animation
 # ================================================================
-def loading_animation(stop_event, text="جارٍ البحث"):
+def loading_animation(stop_event, text="Searching"):
     chars = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
     i = 0
     while not stop_event.is_set():
@@ -260,24 +259,24 @@ def loading_animation(stop_event, text="جارٍ البحث"):
     sys.stdout.write("\r" + " " * 50 + "\r")
 
 # ================================================================
-#  البحث الرئيسي مع Webhook
+#  Main Hunting Function
 # ================================================================
 def hunt_with_webhook(length, count, platforms, webhook_url, pattern=None):
-    """البحث عن يوزرات وإرسالها إلى Webhook"""
+    """Hunt for usernames and send to Webhook"""
     results = {p: [] for p in platforms}
     total_found = 0
     webhook_sent = 0
     
-    print(f"\n{col(Colors.BLUE, '[*]')} توليد {count} يوزر بطول {length}...")
+    print(f"\n{col(Colors.BLUE, '[*]')} Generating {count} usernames with length {length}...")
     usernames = generate_batch(length, count, pattern)
-    print(f"{col(Colors.GREEN, '[+]')} تم توليد {len(usernames)} يوزر\n")
+    print(f"{col(Colors.GREEN, '[+]')} Generated {len(usernames)} usernames\n")
     
     total_checks = len(usernames) * len(platforms)
     checked = 0
     stop_spinner = threading.Event()
     spinner_thread = threading.Thread(
         target=loading_animation,
-        args=(stop_spinner, f"فحص 0/{total_checks}")
+        args=(stop_spinner, f"Checking 0/{total_checks}")
     )
     spinner_thread.daemon = True
     spinner_thread.start()
@@ -291,7 +290,7 @@ def hunt_with_webhook(length, count, platforms, webhook_url, pattern=None):
                 stop_spinner = threading.Event()
                 spinner_thread = threading.Thread(
                     target=loading_animation,
-                    args=(stop_spinner, f"فحص {checked}/{total_checks}")
+                    args=(stop_spinner, f"Checking {checked}/{total_checks}")
                 )
                 spinner_thread.daemon = True
                 spinner_thread.start()
@@ -301,18 +300,18 @@ def hunt_with_webhook(length, count, platforms, webhook_url, pattern=None):
                 results[platform].append(username)
                 total_found += 1
                 
-                # عرض في الشاشة
+                # Display on screen
                 sys.stdout.write(
                     f"\r{col(Colors.GREEN, '[+]')} {col(Colors.WHITE, username)} → "
-                    f"{col(Colors.CYAN, platform)} متاح!          \n"
+                    f"{col(Colors.CYAN, platform)} AVAILABLE!          \n"
                 )
                 sys.stdout.flush()
                 
-                # إرسال إلى Webhook
+                # Send to Webhook
                 if webhook_url:
                     if send_to_webhook(webhook_url, username, platform):
                         webhook_sent += 1
-                        print(f"{col(Colors.GREEN, '  📤')} تم إرسال @{username} إلى Webhook")
+                        print(f"{col(Colors.GREEN, '  📤')} Sent @{username} to Webhook")
             
             time.sleep(0.05)
     
@@ -324,27 +323,27 @@ def hunt_with_webhook(length, count, platforms, webhook_url, pattern=None):
     return results, total_found, webhook_sent
 
 # ================================================================
-#  عرض النتائج وحفظها
+#  Display Results
 # ================================================================
 def display_results(results, total_found, webhook_sent):
-    """عرض النتائج بشكل فخم"""
+    """Display results in a fancy way"""
     print(f"\n{Colors.YELLOW}╔═══════════════════════════════════════════════════════════════╗")
-    print(f"{Colors.YELLOW}║{Colors.WHITE}  📊 تقرير WEBHOOK-HUNTER                           {Colors.YELLOW}║")
+    print(f"{Colors.YELLOW}║{Colors.WHITE}  📊 WEBHOOK-HUNTER Report                          {Colors.YELLOW}║")
     print(f"{Colors.YELLOW}║{Colors.WHITE}  ──────────────────────────────────────────────    {Colors.YELLOW}║")
-    print(f"{Colors.YELLOW}║{Colors.WHITE}  ✅ تم العثور على: {total_found} يوزر                  {Colors.YELLOW}║")
-    print(f"{Colors.YELLOW}║{Colors.WHITE}  📤 تم الإرسال إلى Webhook: {webhook_sent}            {Colors.YELLOW}║")
+    print(f"{Colors.YELLOW}║{Colors.WHITE}  ✅ Found: {total_found} usernames                     {Colors.YELLOW}║")
+    print(f"{Colors.YELLOW}║{Colors.WHITE}  📤 Sent to Webhook: {webhook_sent}                   {Colors.YELLOW}║")
     print(f"{Colors.YELLOW}╚═══════════════════════════════════════════════════════════════╝{Colors.RESET}\n")
     
     for platform, usernames in results.items():
         if usernames:
-            print(f"{col(Colors.CYAN, f'► {platform.upper()}')} — {len(usernames)} يوزر")
+            print(f"{col(Colors.CYAN, f'► {platform.upper()}')} — {len(usernames)} usernames")
             for i, u in enumerate(usernames[:20], 1):
                 print(f"    {i:2}. {col(Colors.GREEN, u)}")
             if len(usernames) > 20:
-                print(f"    ... و {len(usernames)-20} يوزر آخر")
+                print(f"    ... and {len(usernames)-20} more")
             print()
     
-    # حفظ JSON
+    # Save JSON
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     json_file = f"webhook_hunt_{timestamp}.json"
     try:
@@ -357,20 +356,20 @@ def display_results(results, total_found, webhook_sent):
                 "version": VERSION,
                 "author": AUTHOR
             }, f, indent=2, ensure_ascii=False)
-        print(f"{col(Colors.GREEN, '[+]')} تم حفظ JSON في: {col(Colors.WHITE, json_file)}")
+        print(f"{col(Colors.GREEN, '[+]')} Saved JSON to: {col(Colors.WHITE, json_file)}")
     except Exception as e:
-        print(f"{col(Colors.RED, f'[!] فشل حفظ JSON: {e}')}")
+        print(f"{col(Colors.RED, f'[!] Failed to save JSON: {e}')}")
     
-    # حفظ TXT
+    # Save TXT
     txt_file = f"webhook_usernames_{timestamp}.txt"
     try:
         with open(txt_file, "w", encoding="utf-8") as f:
             f.write("=" * 60 + "\n")
             f.write(f"  {VERSION}\n")
             f.write(f"  {COPYRIGHT}\n")
-            f.write(f"  المطور: {AUTHOR} ({CONTACT})\n")
-            f.write(f"  التاريخ: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-            f.write(f"  تم الإرسال إلى Webhook: {webhook_sent}\n")
+            f.write(f"  Author: {AUTHOR} ({CONTACT})\n")
+            f.write(f"  Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"  Sent to Webhook: {webhook_sent}\n")
             f.write("=" * 60 + "\n\n")
             for platform, usernames in results.items():
                 if usernames:
@@ -378,31 +377,31 @@ def display_results(results, total_found, webhook_sent):
                     for u in usernames:
                         f.write(f"  @{u}\n")
                     f.write("\n")
-            f.write(f"\nالإجمالي: {total_found} يوزر\n")
-        print(f"{col(Colors.GREEN, '[+]')} تم حفظ النص في: {col(Colors.WHITE, txt_file)}")
+            f.write(f"\nTotal: {total_found} usernames\n")
+        print(f"{col(Colors.GREEN, '[+]')} Saved TXT to: {col(Colors.WHITE, txt_file)}")
     except Exception as e:
-        print(f"{col(Colors.RED, f'[!] فشل حفظ النص: {e}')}")
+        print(f"{col(Colors.RED, f'[!] Failed to save TXT: {e}')}")
     
     print(f"\n{Colors.DIM}[*] {COPYRIGHT}{Colors.RESET}")
 
 # ================================================================
-#  القائمة الرئيسية
+#  Main Menu
 # ================================================================
 def main_menu():
-    """عرض القائمة الرئيسية"""
+    """Display main menu"""
     print_banner()
     
     menu = f"""
 {Colors.YELLOW}┌────────────────────────────────────────────────────────────────┐
-{Colors.YELLOW}│{Colors.WHITE}  [1] يوزرات ثلاثية (3 أحرف)  — نادرة جداً               {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [2] يوزرات رباعية  (4 أحرف)  — نادرة                  {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [3] يوزرات خماسية  (5 أحرف)  — متوسطة الندرة          {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [4] يوزرات سداسية  (6 أحرف)  — شائعة نسبياً           {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [5] يوزرات مخصصة (اختر الطول)                          {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [6] يوزرات فقط أحرف (بدون أرقام أو رموز)              {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [7] يوزرات مختلطة (أحرف + أرقام + رموز)               {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [8] فحص يوزر واحد فقط                                   {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.RED}  [0] خروج                                              {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [1] 3-Letter Usernames  — Extremely Rare           {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [2] 4-Letter Usernames  — Rare                     {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [3] 5-Letter Usernames  — Moderately Rare          {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [4] 6-Letter Usernames  — Common                   {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [5] Custom Length Usernames                         {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [6] Letters Only (No Numbers or Symbols)           {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [7] Mixed (Letters + Numbers + Symbols)            {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [8] Check Single Username                           {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.RED}  [0] Exit                                            {Colors.YELLOW}│
 {Colors.YELLOW}└────────────────────────────────────────────────────────────────┘{Colors.RESET}
     """
     print(menu)
@@ -412,15 +411,15 @@ def main_menu():
     except (EOFError, KeyboardInterrupt):
         return "0"
     
-    # اختيار المنصات
+    # Select platforms
     print(f"\n{Colors.YELLOW}┌────────────────────────────────────────────────────────────┐")
-    print(f"{Colors.YELLOW}│{Colors.WHITE}  اختر المنصات (أرقام مفصولة بفاصلة)                  {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  Select Platforms (comma separated numbers)            {Colors.YELLOW}│")
     print(f"{Colors.YELLOW}│{Colors.WHITE}  1.Instagram  2.Twitter  3.GitHub  4.TikTok           {Colors.YELLOW}│")
     print(f"{Colors.YELLOW}│{Colors.WHITE}  5.Snapchat   6.Reddit   7.Pinterest  8.Twitch        {Colors.YELLOW}│")
-    print(f"{Colors.YELLOW}│{Colors.WHITE}  9.YouTube    10.Telegram  (أو 'all' للكل)           {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  9.YouTube    10.Telegram  (or 'all' for all)        {Colors.YELLOW}│")
     print(f"{Colors.YELLOW}└────────────────────────────────────────────────────────────┘{Colors.RESET}")
     
-    platforms_input = input(f"{col(Colors.CYAN, 'اختر المنصات > ')}").strip()
+    platforms_input = input(f"{col(Colors.CYAN, 'Select Platforms > ')}").strip()
     
     platform_map = {
         "1": "instagram", "2": "twitter", "3": "github", "4": "tiktok",
@@ -439,7 +438,7 @@ def main_menu():
             platforms = ["instagram", "twitter", "github"]
     
     try:
-        count = int(input(f"{col(Colors.CYAN, 'عدد اليوزرات للفحص (1-500) > ')}").strip() or "50")
+        count = int(input(f"{col(Colors.CYAN, 'Number of usernames to check (1-500) > ')}").strip() or "50")
         if count < 1:
             count = 50
         if count > 500:
@@ -447,21 +446,21 @@ def main_menu():
     except ValueError:
         count = 50
     
-    # طلب Webhook
+    # Ask for Webhook URL
     print(f"\n{Colors.YELLOW}┌────────────────────────────────────────────────────────────┐")
-    print(f"{Colors.YELLOW}│{Colors.WHITE}  🔗 أدخل رابط Webhook (Discord/Telegram)           {Colors.YELLOW}│")
-    print(f"{Colors.YELLOW}│{Colors.DIM}  يمكنك تركها فارغة إذا لا تريد الإرسال              {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  🔗 Enter Webhook URL (Discord/Telegram)            {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.DIM}  Leave empty if you don't want to send               {Colors.YELLOW}│")
     print(f"{Colors.YELLOW}└────────────────────────────────────────────────────────────┘{Colors.RESET}")
     
-    webhook_url = input(f"{col(Colors.CYAN, 'رابط Webhook > ')}").strip()
+    webhook_url = input(f"{col(Colors.CYAN, 'Webhook URL > ')}").strip()
     
     return choice, platforms, count, webhook_url
 
 # ================================================================
-#  التشغيل الرئيسي
+#  Main Execution
 # ================================================================
 def main():
-    """الوظيفة الرئيسية"""
+    """Main function"""
     print(f"{Colors.DIM}\n{VERSION} | {COPYRIGHT}{Colors.RESET}")
     time.sleep(0.5)
     
@@ -469,7 +468,7 @@ def main():
         try:
             result = main_menu()
             if result == "0" or result == 0:
-                print(f"\n{col(Colors.GREEN, '[+]')} مع السلامة! | {VERSION}\n")
+                print(f"\n{col(Colors.GREEN, '[+]')} Goodbye! | {VERSION}\n")
                 print(f"{Colors.DIM}[*] {COPYRIGHT}{Colors.RESET}")
                 break
             
@@ -478,7 +477,7 @@ def main():
             else:
                 continue
             
-            # تحديد الطول والنمط
+            # Determine length and pattern
             length_map = {"1": 3, "2": 4, "3": 5, "4": 6}
             pattern = None
             
@@ -486,7 +485,7 @@ def main():
                 length = length_map[choice]
             elif choice == "5":
                 try:
-                    length = int(input(f"{col(Colors.CYAN, 'أدخل الطول (2-20) > ')}").strip() or "5")
+                    length = int(input(f"{col(Colors.CYAN, 'Enter length (2-20) > ')}").strip() or "5")
                     if length < 2:
                         length = 2
                     if length > 20:
@@ -500,36 +499,36 @@ def main():
                 length = 4
                 pattern = "mix"
             elif choice == "8":
-                username = input(f"{col(Colors.CYAN, 'أدخل اليوزر للفحص > ')}").strip()
+                username = input(f"{col(Colors.CYAN, 'Enter username to check > ')}").strip()
                 if not username:
                     continue
-                print(f"\n{col(Colors.BLUE, '[*]')} فحص @{username}...\n")
+                print(f"\n{col(Colors.BLUE, '[*]')} Checking @{username}...\n")
                 for platform in platforms:
                     available = check_username(username, platform)
                     if available is True:
-                        print(f"  {col(Colors.GREEN, '✅')} {platform:12} → متاح")
+                        print(f"  {col(Colors.GREEN, '✅')} {platform:12} → AVAILABLE")
                         if webhook_url:
                             send_to_webhook(webhook_url, username, platform)
                     elif available is False:
-                        print(f"  {col(Colors.RED, '❌')} {platform:12} → مأخوذ")
+                        print(f"  {col(Colors.RED, '❌')} {platform:12} → TAKEN")
                     else:
-                        print(f"  {col(Colors.YELLOW, '⚠️')} {platform:12} → غير معروف")
+                        print(f"  {col(Colors.YELLOW, '⚠️')} {platform:12} → UNKNOWN")
                     time.sleep(0.2)
-                input(f"\n{col(Colors.YELLOW, '[*]')} اضغط Enter للرجوع...")
+                input(f"\n{col(Colors.YELLOW, '[*]')} Press Enter to return...")
                 continue
             else:
                 length = 4
             
-            # بدء الصيد
+            # Start hunting
             clear_screen()
             print_banner()
-            print(f"\n{col(Colors.RED, '[🔥]')} بدء الصيد...")
-            print(f"  الطول: {length} | العدد: {count} | المنصات: {len(platforms)}")
-            print(f"  {'، '.join(platforms[:5])}{'...' if len(platforms) > 5 else ''}")
+            print(f"\n{col(Colors.RED, '[🔥]')} Starting hunt...")
+            print(f"  Length: {length} | Count: {count} | Platforms: {len(platforms)}")
+            print(f"  {', '.join(platforms[:5])}{'...' if len(platforms) > 5 else ''}")
             if webhook_url:
-                print(f"  📤 Webhook: {col(Colors.GREEN, 'مفعل')}")
+                print(f"  📤 Webhook: {col(Colors.GREEN, 'Enabled')}")
             else:
-                print(f"  📤 Webhook: {col(Colors.RED, 'غير مفعل')}")
+                print(f"  📤 Webhook: {col(Colors.RED, 'Disabled')}")
             print()
             
             start_time = time.time()
@@ -539,21 +538,21 @@ def main():
             elapsed = time.time() - start_time
             
             display_results(results, total_found, webhook_sent)
-            print(f"\n{Colors.DIM}[*] الوقت المستغرق: {elapsed:.1f} ثانية{Colors.RESET}")
+            print(f"\n{Colors.DIM}[*] Time taken: {elapsed:.1f} seconds{Colors.RESET}")
             print(f"{Colors.DIM}[*] {COPYRIGHT}{Colors.RESET}")
             
-            input(f"\n{col(Colors.YELLOW, '[*]')} اضغط Enter للرجوع إلى القائمة...")
+            input(f"\n{col(Colors.YELLOW, '[*]')} Press Enter to return to menu...")
             
         except KeyboardInterrupt:
-            print(f"\n{col(Colors.YELLOW, '[!]')} تم الإيقاف بواسطة المستخدم")
+            print(f"\n{col(Colors.YELLOW, '[!]')} Interrupted by user")
             print(f"{Colors.DIM}[*] {COPYRIGHT}{Colors.RESET}")
             break
         except Exception as e:
-            print(f"\n{col(Colors.RED, f'[!] خطأ: {e}')}")
-            input(f"\n{col(Colors.YELLOW, '[*]')} اضغط Enter للمتابعة...")
+            print(f"\n{col(Colors.RED, f'[!] Error: {e}')}")
+            input(f"\n{col(Colors.YELLOW, '[*]')} Press Enter to continue...")
 
 # ================================================================
-#  نقطة الدخول
+#  Entry Point
 # ================================================================
 if __name__ == "__main__":
     main()
