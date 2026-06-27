@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ╔═══════════════════════════════════════════════════════════════╗
-║   🥷 WEBHOOK-HUNTER — Shadow Username Hunter               ║
-║   Hunt Rare Usernames + Send to Webhook                    ║
+║   🥷 WEBHOOK-HUNTER XTREME — ULTIMATE USERNAME HUNTER     ║
 ║   Discord: in7j  |  Python 3 Only                          ║
 ║   ⚠️ Educational Purpose Only                              ║
 ║   ═════════════════════════════════════════════════════════ ║
@@ -32,7 +31,7 @@ if sys.version_info < (3, 6):
 # ================================================================
 #  NINJA Signature
 # ================================================================
-VERSION = "WEBHOOK-HUNTER-v1.0"
+VERSION = "WEBHOOK-HUNTER-XTREME-v2.0"
 AUTHOR = "in7j"
 CONTACT = "DISCORD: in7j"
 COPYRIGHT = "© 2026 NINJA ™ — All Rights Reserved"
@@ -71,41 +70,124 @@ def print_banner():
 {Colors.RED}║{Colors.YELLOW}   ██╔══██║██║   ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗ {Colors.RED}║
 {Colors.RED}║{Colors.YELLOW}   ██║  ██║╚██████╔╝██║ ╚████║   ██║   ███████╗██║  ██║ {Colors.RED}║
 {Colors.RED}║{Colors.YELLOW}   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝ {Colors.RED}║
-{Colors.RED}║{Colors.CYAN}   🥷 WEBHOOK-HUNTER  v1.0                           {Colors.RED}║
-{Colors.RED}║{Colors.GREEN}   Hunt Rare Usernames + Send to Webhook            {Colors.RED}║
-{Colors.RED}║{Colors.RED}   ⚠️  Educational Purpose Only                        {Colors.RED}║
-{Colors.RED}║{Colors.DIM}   {COPYRIGHT}                                          {Colors.RED}║
+{Colors.RED}║{Colors.CYAN}   🥷 WEBHOOK-HUNTER XTREME  v2.0                   {Colors.RED}║
+{Colors.RED}║{Colors.GREEN}   ULTIMATE Username Hunter + Discord             {Colors.RED}║
+{Colors.RED}║{Colors.RED}   ⚠️  Educational Purpose Only                    {Colors.RED}║
+{Colors.RED}║{Colors.DIM}   {COPYRIGHT}                                      {Colors.RED}║
 {Colors.RED}╚═══════════════════════════════════════════════════════════════╝{Colors.RESET}
     """
     print(banner)
 
 # ================================================================
-#  Supported Platforms
+#  SMART RANDOM USER AGENTS
+# ================================================================
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 14; SM-S921B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.230 Mobile Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1"
+]
+
+# ================================================================
+#  DISCORD USERNAME VALIDATION
+# ================================================================
+DISCORD_MIN_LENGTH = 2
+DISCORD_MAX_LENGTH = 32
+DISCORD_ALLOWED = string.ascii_lowercase + string.digits + "._-"
+
+def is_valid_discord_username(username):
+    if len(username) < DISCORD_MIN_LENGTH or len(username) > DISCORD_MAX_LENGTH:
+        return False
+    if username[0] in "._-" or username[-1] in "._-":
+        return False
+    if ".." in username or "__" in username or "--" in username:
+        return False
+    for char in username:
+        if char not in DISCORD_ALLOWED:
+            return False
+    return True
+
+def generate_discord_username(length):
+    specials = "._-"
+    safe_chars = string.ascii_lowercase + string.digits
+    all_chars = safe_chars + specials
+    
+    for _ in range(100):
+        username = random.choice(safe_chars)
+        for _ in range(length - 1):
+            char = random.choice(all_chars)
+            if char in specials and username[-1] in specials:
+                char = random.choice(safe_chars)
+            username += char
+        if username[-1] in specials:
+            username = username[:-1] + random.choice(safe_chars)
+        if is_valid_discord_username(username):
+            return username
+    return None
+
+# ================================================================
+#  SMART PLATFORM CHECKERS
+# ================================================================
+def check_with_retry(url, check_func, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "User-Agent": random.choice(USER_AGENTS),
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept-Encoding": "gzip, deflate, br",
+                    "Connection": "keep-alive",
+                    "Cache-Control": "no-cache"
+                }
+            )
+            with urllib.request.urlopen(req, timeout=8) as response:
+                status = response.status
+                body = response.read().decode('utf-8', errors='ignore')
+                return check_func(status, body)
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return True
+            return check_func(e.code, "")
+        except Exception as e:
+            if attempt < max_retries - 1:
+                time.sleep(random.uniform(0.5, 1.5))
+                continue
+            return None
+    return None
+
+# ================================================================
+#  PLATFORMS WITH SMART CHECKERS
 # ================================================================
 PLATFORMS = {
     "instagram": {
         "url": "https://www.instagram.com/{}/",
-        "check": lambda status, body: status == 404 or "user_not_found" in body
+        "check": lambda status, body: status == 404 or "user_not_found" in body or "Page Not Found" in body
     },
     "twitter": {
         "url": "https://twitter.com/{}/",
-        "check": lambda status, body: status == 404 or "user-not-found" in body.lower()
+        "check": lambda status, body: status == 404 or "user-not-found" in body.lower() or "This account doesn't exist" in body
     },
     "github": {
         "url": "https://github.com/{}",
-        "check": lambda status, body: status == 404
+        "check": lambda status, body: status == 404 or "Page not found" in body
     },
     "tiktok": {
         "url": "https://www.tiktok.com/@{}",
-        "check": lambda status, body: status == 404 or "Couldn’t find" in body
+        "check": lambda status, body: status == 404 or "Couldn't find" in body or "This account could not be found" in body
     },
     "snapchat": {
         "url": "https://www.snapchat.com/add/{}",
-        "check": lambda status, body: status == 404
+        "check": lambda status, body: status == 404 or "Could not find" in body
     },
     "reddit": {
         "url": "https://www.reddit.com/user/{}/",
-        "check": lambda status, body: status == 404
+        "check": lambda status, body: status == 404 or "Page not found" in body
     },
     "pinterest": {
         "url": "https://www.pinterest.com/{}/",
@@ -122,49 +204,15 @@ PLATFORMS = {
     "telegram": {
         "url": "https://t.me/{}",
         "check": lambda status, body: "tgme_page_extra" not in body and "If you have Telegram" not in body
+    },
+    "discord": {
+        "url": "https://discord.com/users/{}",
+        "check": lambda status, body: status == 404 or "User not found" in body
     }
 }
 
 # ================================================================
-#  Username Generator
-# ================================================================
-def generate_username(length, pattern=None):
-    chars = string.ascii_lowercase + string.digits
-    if pattern == "letters":
-        chars = string.ascii_lowercase
-    elif pattern == "mix":
-        chars = string.ascii_lowercase + string.digits + "._"
-    
-    first_chars = string.ascii_lowercase + string.digits
-    username = random.choice([c for c in chars if c in first_chars])
-    
-    for _ in range(length - 1):
-        ch = random.choice(chars)
-        if ch in "._" and username[-1] in "._":
-            ch = random.choice(string.ascii_lowercase + string.digits)
-        username += ch
-    
-    if username[-1] in "._":
-        username = username[:-1] + random.choice(string.ascii_lowercase + string.digits)
-    
-    return username
-
-def generate_batch(length, count, pattern=None):
-    seen = set()
-    result = []
-    attempts = 0
-    max_attempts = count * 50
-    
-    while len(result) < count and attempts < max_attempts:
-        attempts += 1
-        u = generate_username(length, pattern)
-        if u not in seen:
-            seen.add(u)
-            result.append(u)
-    return result
-
-# ================================================================
-#  Username Checker
+#  CHECK USERNAME FUNCTION
 # ================================================================
 def check_username(username, platform):
     config = PLATFORMS.get(platform)
@@ -172,58 +220,35 @@ def check_username(username, platform):
         return None
     
     url = config["url"].format(username)
-    try:
-        req = urllib.request.Request(
-            url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                "Accept-Language": "en-US,en;q=0.9"
-            }
-        )
-        with urllib.request.urlopen(req, timeout=5) as response:
-            status = response.status
-            body = response.read().decode('utf-8', errors='ignore')
-            return config["check"](status, body)
-    except urllib.error.HTTPError as e:
-        return config["check"](e.code, "")
-    except:
-        return None
+    
+    if platform == "discord":
+        vanity_url = f"https://discord.com/invite/{username}"
+        vanity_result = check_with_retry(vanity_url, lambda s, b: s == 404)
+        if vanity_result is False:
+            return False
+        if vanity_result is True:
+            profile_result = check_with_retry(url, config["check"])
+            return profile_result
+        return check_with_retry(url, config["check"])
+    
+    return check_with_retry(url, config["check"])
 
 # ================================================================
-#  Webhook Sender
+#  WEBHOOK SENDER
 # ================================================================
 def send_to_webhook(webhook_url, username, platform):
-    """Send discovered username to Webhook"""
     try:
         embed = {
             "embeds": [{
-                "title": "🎯 Rare Username Found!",
+                "title": "🎯 RARE USERNAME FOUND!",
                 "color": 0x00ff00,
                 "fields": [
-                    {
-                        "name": "👤 Username",
-                        "value": f"`@{username}`",
-                        "inline": True
-                    },
-                    {
-                        "name": "🌐 Platform",
-                        "value": platform.capitalize(),
-                        "inline": True
-                    },
-                    {
-                        "name": "📅 Date",
-                        "value": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "inline": False
-                    },
-                    {
-                        "name": "🔗 Link",
-                        "value": f"[Click Here]({PLATFORMS[platform]['url'].format(username)})",
-                        "inline": False
-                    }
+                    {"name": "👤 Username", "value": f"`@{username}`", "inline": True},
+                    {"name": "🌐 Platform", "value": platform.capitalize(), "inline": True},
+                    {"name": "📅 Date", "value": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "inline": False},
+                    {"name": "🔗 Link", "value": f"[Click Here]({PLATFORMS[platform]['url'].format(username)})", "inline": False}
                 ],
-                "footer": {
-                    "text": f"{COPYRIGHT} | {AUTHOR}"
-                }
+                "footer": {"text": f"{COPYRIGHT} | {AUTHOR}"}
             }]
         }
         
@@ -231,192 +256,142 @@ def send_to_webhook(webhook_url, username, platform):
         req = urllib.request.Request(
             webhook_url,
             data=data,
-            headers={
-                "Content-Type": "application/json",
-                "User-Agent": "Mozilla/5.0"
-            },
+            headers={"Content-Type": "application/json", "User-Agent": random.choice(USER_AGENTS)},
             method="POST"
         )
         
         with urllib.request.urlopen(req, timeout=10) as response:
-            return response.status == 204 or response.status == 200
-            
-    except Exception as e:
-        print(f"{col(Colors.RED, f'[!] Failed to send to Webhook: {e}')}")
+            return response.status in [200, 204]
+    except:
         return False
 
 # ================================================================
-#  Loading Animation
+#  USERS GENERATOR
 # ================================================================
-def loading_animation(stop_event, text="Searching"):
-    chars = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
-    i = 0
-    while not stop_event.is_set():
-        sys.stdout.write(f"\r{col(Colors.CYAN, chars[i % len(chars)])} {col(Colors.WHITE, text)}...   ")
-        sys.stdout.flush()
-        i += 1
-        time.sleep(0.1)
-    sys.stdout.write("\r" + " " * 50 + "\r")
+def generate_username(length, pattern=None):
+    chars = string.ascii_lowercase + string.digits
+    if pattern == "letters":
+        chars = string.ascii_lowercase
+    elif pattern == "mix":
+        chars = string.ascii_lowercase + string.digits + "._-"
+    
+    first_chars = string.ascii_lowercase + string.digits
+    username = random.choice([c for c in chars if c in first_chars])
+    
+    for _ in range(length - 1):
+        ch = random.choice(chars)
+        if ch in "._-" and username[-1] in "._-":
+            ch = random.choice(string.ascii_lowercase + string.digits)
+        username += ch
+    
+    if username[-1] in "._-":
+        username = username[:-1] + random.choice(string.ascii_lowercase + string.digits)
+    
+    return username
+
+def generate_batch(length, count, pattern=None, platform=None):
+    seen = set()
+    result = []
+    attempts = 0
+    max_attempts = count * 100
+    
+    while len(result) < count and attempts < max_attempts:
+        attempts += 1
+        
+        if platform == "discord":
+            username = generate_discord_username(length)
+            if username and username not in seen:
+                seen.add(username)
+                result.append(username)
+        else:
+            username = generate_username(length, pattern)
+            if username not in seen:
+                seen.add(username)
+                result.append(username)
+    
+    return result
 
 # ================================================================
-#  Main Hunting Function
+#  MAIN HUNTING ENGINE
 # ================================================================
-def hunt_with_webhook(length, count, platforms, webhook_url, pattern=None):
-    """Hunt for usernames and send to Webhook"""
+def hunt_with_webhook(length, count, platforms, webhook_url, pattern=None, discord_only=False):
     results = {p: [] for p in platforms}
     total_found = 0
     webhook_sent = 0
     
-    print(f"\n{col(Colors.BLUE, '[*]')} Generating {count} usernames with length {length}...")
-    usernames = generate_batch(length, count, pattern)
-    print(f"{col(Colors.GREEN, '[+]')} Generated {len(usernames)} usernames\n")
+    print(f"\n{col(Colors.BLUE, '[*]')} Generating {count} usernames (length {length})...")
     
-    total_checks = len(usernames) * len(platforms)
+    all_usernames = []
+    if discord_only:
+        for _ in range(count * 3):
+            u = generate_discord_username(length)
+            if u and u not in all_usernames:
+                all_usernames.append(u)
+                if len(all_usernames) >= count:
+                    break
+    else:
+        all_usernames = generate_batch(length, count, pattern)
+    
+    print(f"{col(Colors.GREEN, '[+]')} Generated {len(all_usernames)} usernames\n")
+    
+    total_checks = len(all_usernames) * len(platforms)
     checked = 0
-    stop_spinner = threading.Event()
-    spinner_thread = threading.Thread(
-        target=loading_animation,
-        args=(stop_spinner, f"Checking 0/{total_checks}")
-    )
-    spinner_thread.daemon = True
-    spinner_thread.start()
     
-    for username in usernames:
+    for username in all_usernames:
         for platform in platforms:
             checked += 1
-            if checked % 5 == 0:
-                stop_spinner.set()
-                time.sleep(0.1)
-                stop_spinner = threading.Event()
-                spinner_thread = threading.Thread(
-                    target=loading_animation,
-                    args=(stop_spinner, f"Checking {checked}/{total_checks}")
-                )
-                spinner_thread.daemon = True
-                spinner_thread.start()
+            sys.stdout.write(f"\r{col(Colors.CYAN, '[⏳]')} Checking {checked}/{total_checks}...   ")
+            sys.stdout.flush()
             
             available = check_username(username, platform)
+            
             if available is True:
                 results[platform].append(username)
                 total_found += 1
-                
-                # Display on screen
-                sys.stdout.write(
-                    f"\r{col(Colors.GREEN, '[+]')} {col(Colors.WHITE, username)} → "
-                    f"{col(Colors.CYAN, platform)} AVAILABLE!          \n"
-                )
+                sys.stdout.write(f"\r{col(Colors.GREEN, '[✅]')} {col(Colors.WHITE, username)} → {col(Colors.CYAN, platform)} AVAILABLE!          \n")
                 sys.stdout.flush()
                 
-                # Send to Webhook
                 if webhook_url:
                     if send_to_webhook(webhook_url, username, platform):
                         webhook_sent += 1
-                        print(f"{col(Colors.GREEN, '  📤')} Sent @{username} to Webhook")
+                        print(f"{col(Colors.GREEN, '  📤')} Sent to Webhook")
             
-            time.sleep(0.05)
+            time.sleep(random.uniform(0.2, 0.5))
     
-    stop_spinner.set()
-    time.sleep(0.2)
     sys.stdout.write("\r" + " " * 60 + "\r")
     sys.stdout.flush()
     
     return results, total_found, webhook_sent
 
 # ================================================================
-#  Display Results
-# ================================================================
-def display_results(results, total_found, webhook_sent):
-    """Display results in a fancy way"""
-    print(f"\n{Colors.YELLOW}╔═══════════════════════════════════════════════════════════════╗")
-    print(f"{Colors.YELLOW}║{Colors.WHITE}  📊 WEBHOOK-HUNTER Report                          {Colors.YELLOW}║")
-    print(f"{Colors.YELLOW}║{Colors.WHITE}  ──────────────────────────────────────────────    {Colors.YELLOW}║")
-    print(f"{Colors.YELLOW}║{Colors.WHITE}  ✅ Found: {total_found} usernames                     {Colors.YELLOW}║")
-    print(f"{Colors.YELLOW}║{Colors.WHITE}  📤 Sent to Webhook: {webhook_sent}                   {Colors.YELLOW}║")
-    print(f"{Colors.YELLOW}╚═══════════════════════════════════════════════════════════════╝{Colors.RESET}\n")
-    
-    for platform, usernames in results.items():
-        if usernames:
-            print(f"{col(Colors.CYAN, f'► {platform.upper()}')} — {len(usernames)} usernames")
-            for i, u in enumerate(usernames[:20], 1):
-                print(f"    {i:2}. {col(Colors.GREEN, u)}")
-            if len(usernames) > 20:
-                print(f"    ... and {len(usernames)-20} more")
-            print()
-    
-    # Save JSON
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    json_file = f"webhook_hunt_{timestamp}.json"
-    try:
-        with open(json_file, "w", encoding="utf-8") as f:
-            json.dump({
-                "results": results,
-                "total": total_found,
-                "webhook_sent": webhook_sent,
-                "date": timestamp,
-                "version": VERSION,
-                "author": AUTHOR
-            }, f, indent=2, ensure_ascii=False)
-        print(f"{col(Colors.GREEN, '[+]')} Saved JSON to: {col(Colors.WHITE, json_file)}")
-    except Exception as e:
-        print(f"{col(Colors.RED, f'[!] Failed to save JSON: {e}')}")
-    
-    # Save TXT
-    txt_file = f"webhook_usernames_{timestamp}.txt"
-    try:
-        with open(txt_file, "w", encoding="utf-8") as f:
-            f.write("=" * 60 + "\n")
-            f.write(f"  {VERSION}\n")
-            f.write(f"  {COPYRIGHT}\n")
-            f.write(f"  Author: {AUTHOR} ({CONTACT})\n")
-            f.write(f"  Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-            f.write(f"  Sent to Webhook: {webhook_sent}\n")
-            f.write("=" * 60 + "\n\n")
-            for platform, usernames in results.items():
-                if usernames:
-                    f.write(f"[{platform.upper()}]\n")
-                    for u in usernames:
-                        f.write(f"  @{u}\n")
-                    f.write("\n")
-            f.write(f"\nTotal: {total_found} usernames\n")
-        print(f"{col(Colors.GREEN, '[+]')} Saved TXT to: {col(Colors.WHITE, txt_file)}")
-    except Exception as e:
-        print(f"{col(Colors.RED, f'[!] Failed to save TXT: {e}')}")
-    
-    print(f"\n{Colors.DIM}[*] {COPYRIGHT}{Colors.RESET}")
-
-# ================================================================
-#  Main Menu
+#  MENU & DISPLAY
 # ================================================================
 def main_menu():
-    """Display main menu"""
     print_banner()
     
     menu = f"""
-{Colors.YELLOW}┌────────────────────────────────────────────────────────────────┐
-{Colors.YELLOW}│{Colors.WHITE}  [1] 3-Letter Usernames  — Extremely Rare           {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [2] 4-Letter Usernames  — Rare                     {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [3] 5-Letter Usernames  — Moderately Rare          {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [4] 6-Letter Usernames  — Common                   {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [5] Custom Length Usernames                         {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [6] Letters Only (No Numbers or Symbols)           {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [7] Mixed (Letters + Numbers + Symbols)            {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.WHITE}  [8] Check Single Username                           {Colors.YELLOW}│
-{Colors.YELLOW}│{Colors.RED}  [0] Exit                                            {Colors.YELLOW}│
-{Colors.YELLOW}└────────────────────────────────────────────────────────────────┘{Colors.RESET}
+{Colors.YELLOW}┌──────────────────────────────────────────────────────────────┐
+{Colors.YELLOW}│{Colors.WHITE}  [1] 3-Letter Usernames  — EXTREMELY RARE       {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [2] 4-Letter Usernames  — VERY RARE            {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [3] 5-Letter Usernames  — RARE                 {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [4] 6-Letter Usernames  — MODERATE             {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [5] Custom Length                              {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [6] Letters Only (No Numbers)                  {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [7] Discord Only (Valid Usernames)             {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.WHITE}  [8] Check Single Username                      {Colors.YELLOW}│
+{Colors.YELLOW}│{Colors.RED}  [0] Exit                                       {Colors.YELLOW}│
+{Colors.YELLOW}└──────────────────────────────────────────────────────────────┘{Colors.RESET}
     """
     print(menu)
     
-    try:
-        choice = input(f"{col(Colors.CYAN, 'ninja@webhook ~$ ')}").strip()
-    except (EOFError, KeyboardInterrupt):
-        return "0"
+    choice = input(f"{col(Colors.CYAN, 'ninja@xtreme ~$ ')}").strip()
     
-    # Select platforms
     print(f"\n{Colors.YELLOW}┌────────────────────────────────────────────────────────────┐")
-    print(f"{Colors.YELLOW}│{Colors.WHITE}  Select Platforms (comma separated numbers)            {Colors.YELLOW}│")
-    print(f"{Colors.YELLOW}│{Colors.WHITE}  1.Instagram  2.Twitter  3.GitHub  4.TikTok           {Colors.YELLOW}│")
-    print(f"{Colors.YELLOW}│{Colors.WHITE}  5.Snapchat   6.Reddit   7.Pinterest  8.Twitch        {Colors.YELLOW}│")
-    print(f"{Colors.YELLOW}│{Colors.WHITE}  9.YouTube    10.Telegram  (or 'all' for all)        {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  Select Platforms (comma separated)               {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  1.Insta  2.Twitter  3.GitHub  4.TikTok           {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  5.Snap   6.Reddit   7.Pinterest  8.Twitch        {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  9.YouTube  10.Telegram  11.Discord               {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  'all' for all  |  'social' for all except Discord {Colors.YELLOW}│")
     print(f"{Colors.YELLOW}└────────────────────────────────────────────────────────────┘{Colors.RESET}")
     
     platforms_input = input(f"{col(Colors.CYAN, 'Select Platforms > ')}").strip()
@@ -424,11 +399,13 @@ def main_menu():
     platform_map = {
         "1": "instagram", "2": "twitter", "3": "github", "4": "tiktok",
         "5": "snapchat", "6": "reddit", "7": "pinterest", "8": "twitch",
-        "9": "youtube", "10": "telegram"
+        "9": "youtube", "10": "telegram", "11": "discord"
     }
     
     if platforms_input.lower() == "all":
         platforms = list(PLATFORMS.keys())
+    elif platforms_input.lower() == "social":
+        platforms = [p for p in PLATFORMS.keys() if p != "discord"]
     else:
         platforms = []
         for p in platforms_input.replace(" ", "").split(","):
@@ -438,29 +415,62 @@ def main_menu():
             platforms = ["instagram", "twitter", "github"]
     
     try:
-        count = int(input(f"{col(Colors.CYAN, 'Number of usernames to check (1-500) > ')}").strip() or "50")
-        if count < 1:
-            count = 50
-        if count > 500:
-            count = 500
-    except ValueError:
+        count = int(input(f"{col(Colors.CYAN, 'Count (1-200) > ')}").strip() or "50")
+        if count < 1: count = 10
+        if count > 200: count = 200
+    except:
         count = 50
     
-    # Ask for Webhook URL
     print(f"\n{Colors.YELLOW}┌────────────────────────────────────────────────────────────┐")
-    print(f"{Colors.YELLOW}│{Colors.WHITE}  🔗 Enter Webhook URL (Discord/Telegram)            {Colors.YELLOW}│")
-    print(f"{Colors.YELLOW}│{Colors.DIM}  Leave empty if you don't want to send               {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.WHITE}  🔗 Webhook URL (Discord/Telegram)                {Colors.YELLOW}│")
+    print(f"{Colors.YELLOW}│{Colors.DIM}  Leave empty for local save only                    {Colors.YELLOW}│")
     print(f"{Colors.YELLOW}└────────────────────────────────────────────────────────────┘{Colors.RESET}")
     
     webhook_url = input(f"{col(Colors.CYAN, 'Webhook URL > ')}").strip()
     
     return choice, platforms, count, webhook_url
 
+def display_results(results, total_found, webhook_sent):
+    print(f"\n{Colors.YELLOW}╔═══════════════════════════════════════════════════════════════╗")
+    print(f"{Colors.YELLOW}║{Colors.WHITE}  📊 XTREME HUNT RESULTS                           {Colors.YELLOW}║")
+    print(f"{Colors.YELLOW}║{Colors.WHITE}  ──────────────────────────────────────────────    {Colors.YELLOW}║")
+    print(f"{Colors.YELLOW}║{Colors.WHITE}  ✅ FOUND: {total_found} usernames                    {Colors.YELLOW}║")
+    print(f"{Colors.YELLOW}║{Colors.WHITE}  📤 SENT TO WEBHOOK: {webhook_sent}                 {Colors.YELLOW}║")
+    print(f"{Colors.YELLOW}╚═══════════════════════════════════════════════════════════════╝{Colors.RESET}\n")
+    
+    for platform, usernames in results.items():
+        if usernames:
+            print(f"{col(Colors.CYAN, f'► {platform.upper()}')} — {len(usernames)} found")
+            for i, u in enumerate(usernames[:20], 1):
+                print(f"    {i:2}. {col(Colors.GREEN, u)}")
+            if len(usernames) > 20:
+                print(f"    ... and {len(usernames)-20} more")
+            print()
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    with open(f"xtreme_hunt_{timestamp}.json", "w") as f:
+        json.dump({"results": results, "total": total_found, "webhook_sent": webhook_sent}, f, indent=2)
+    
+    with open(f"xtreme_usernames_{timestamp}.txt", "w") as f:
+        f.write("=" * 60 + "\n")
+        f.write(f"  {VERSION}\n")
+        f.write(f"  {COPYRIGHT}\n")
+        f.write(f"  Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write("=" * 60 + "\n\n")
+        for platform, usernames in results.items():
+            if usernames:
+                f.write(f"[{platform.upper()}]\n")
+                for u in usernames:
+                    f.write(f"  @{u}\n")
+                f.write("\n")
+    
+    print(f"{col(Colors.GREEN, '[+]')} Results saved!")
+
 # ================================================================
-#  Main Execution
+#  MAIN
 # ================================================================
 def main():
-    """Main function"""
     print(f"{Colors.DIM}\n{VERSION} | {COPYRIGHT}{Colors.RESET}")
     time.sleep(0.5)
     
@@ -469,7 +479,6 @@ def main():
             result = main_menu()
             if result == "0" or result == 0:
                 print(f"\n{col(Colors.GREEN, '[+]')} Goodbye! | {VERSION}\n")
-                print(f"{Colors.DIM}[*] {COPYRIGHT}{Colors.RESET}")
                 break
             
             if isinstance(result, tuple):
@@ -477,82 +486,68 @@ def main():
             else:
                 continue
             
-            # Determine length and pattern
             length_map = {"1": 3, "2": 4, "3": 5, "4": 6}
             pattern = None
+            discord_only = False
             
             if choice in length_map:
                 length = length_map[choice]
             elif choice == "5":
                 try:
-                    length = int(input(f"{col(Colors.CYAN, 'Enter length (2-20) > ')}").strip() or "5")
-                    if length < 2:
-                        length = 2
-                    if length > 20:
-                        length = 20
-                except ValueError:
-                    length = 5
+                    length = int(input(f"{col(Colors.CYAN, 'Length (2-20) > ')}").strip() or "4")
+                    if length < 2: length = 2
+                    if length > 20: length = 20
+                except:
+                    length = 4
             elif choice == "6":
                 length = 4
                 pattern = "letters"
             elif choice == "7":
                 length = 4
-                pattern = "mix"
+                discord_only = True
+                platforms = ["discord"]
             elif choice == "8":
-                username = input(f"{col(Colors.CYAN, 'Enter username to check > ')}").strip()
-                if not username:
-                    continue
+                username = input(f"{col(Colors.CYAN, 'Username > ')}").strip()
+                if not username: continue
                 print(f"\n{col(Colors.BLUE, '[*]')} Checking @{username}...\n")
                 for platform in platforms:
                     available = check_username(username, platform)
-                    if available is True:
-                        print(f"  {col(Colors.GREEN, '✅')} {platform:12} → AVAILABLE")
-                        if webhook_url:
-                            send_to_webhook(webhook_url, username, platform)
-                    elif available is False:
-                        print(f"  {col(Colors.RED, '❌')} {platform:12} → TAKEN")
-                    else:
-                        print(f"  {col(Colors.YELLOW, '⚠️')} {platform:12} → UNKNOWN")
-                    time.sleep(0.2)
-                input(f"\n{col(Colors.YELLOW, '[*]')} Press Enter to return...")
+                    status = "✅ AVAILABLE" if available is True else "❌ TAKEN" if available is False else "⚠️ UNKNOWN"
+                    color = Colors.GREEN if available is True else Colors.RED if available is False else Colors.YELLOW
+                    print(f"  {col(color, status)} {platform:12}")
+                    if available is True and webhook_url:
+                        send_to_webhook(webhook_url, username, platform)
+                    time.sleep(0.3)
+                input(f"\n{col(Colors.YELLOW, '[*]')} Press Enter to continue...")
                 continue
             else:
                 length = 4
             
-            # Start hunting
             clear_screen()
             print_banner()
-            print(f"\n{col(Colors.RED, '[🔥]')} Starting hunt...")
+            print(f"\n{col(Colors.RED, '[🔥]')} Starting XTREME hunt...")
             print(f"  Length: {length} | Count: {count} | Platforms: {len(platforms)}")
-            print(f"  {', '.join(platforms[:5])}{'...' if len(platforms) > 5 else ''}")
             if webhook_url:
                 print(f"  📤 Webhook: {col(Colors.GREEN, 'Enabled')}")
-            else:
-                print(f"  📤 Webhook: {col(Colors.RED, 'Disabled')}")
             print()
             
-            start_time = time.time()
+            start = time.time()
             results, total_found, webhook_sent = hunt_with_webhook(
-                length, count, platforms, webhook_url, pattern
+                length, count, platforms, webhook_url, pattern, discord_only
             )
-            elapsed = time.time() - start_time
+            elapsed = time.time() - start
             
             display_results(results, total_found, webhook_sent)
-            print(f"\n{Colors.DIM}[*] Time taken: {elapsed:.1f} seconds{Colors.RESET}")
-            print(f"{Colors.DIM}[*] {COPYRIGHT}{Colors.RESET}")
+            print(f"\n{Colors.DIM}[*] Time: {elapsed:.1f}s | {COPYRIGHT}{Colors.RESET}")
             
-            input(f"\n{col(Colors.YELLOW, '[*]')} Press Enter to return to menu...")
+            input(f"\n{col(Colors.YELLOW, '[*]')} Press Enter to continue...")
             
         except KeyboardInterrupt:
-            print(f"\n{col(Colors.YELLOW, '[!]')} Interrupted by user")
-            print(f"{Colors.DIM}[*] {COPYRIGHT}{Colors.RESET}")
+            print(f"\n{col(Colors.YELLOW, '[!]')} Interrupted")
             break
         except Exception as e:
             print(f"\n{col(Colors.RED, f'[!] Error: {e}')}")
             input(f"\n{col(Colors.YELLOW, '[*]')} Press Enter to continue...")
 
-# ================================================================
-#  Entry Point
-# ================================================================
 if __name__ == "__main__":
     main()
